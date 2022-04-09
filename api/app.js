@@ -107,7 +107,17 @@ app.put('/api/recipes/:title', (req, res) => {
 })
 
 //* DELETE methods
-app.delete('/api')
+app.delete('/api/recipes/:title', (req, res) => {
+    var title = req.params.title;
+
+    var myquery = {"title": title};
+    recipe_collection.deleteOne(myquery, (error, result) => {
+        if(error){
+            return res.status(500).send(error);
+        }
+        return res.send(result.result);
+    })
+})
 
 //* ALL methods
 app.all('*', (req,res) => {
