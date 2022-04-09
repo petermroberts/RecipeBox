@@ -1,0 +1,33 @@
+[
+    {
+        "meal": "breakfast",
+        "title": "Cereal",
+        "yeild": "1",
+        "prep_time": "2",
+        "type": "soup",
+        "cuisine": "British",
+        "diet": ["vegetarian"],
+        "ingredients": [
+            {
+                "quantity": "1",
+                "unit": "cups",
+                "ingredient": "cereal"
+            },
+            {
+                "quantity": "1/2",
+                "unit": "cups",
+                "ingredient": "milk"
+            }
+        ],
+        "directions": [
+            {
+                "step": "1",
+                "direction": "Pour cereal into bowl"
+            },
+            {
+                "step": "2",
+                "direction": "Pour milk into bowl"
+            }
+        ]
+    }
+]
