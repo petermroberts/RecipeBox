@@ -3,7 +3,6 @@ require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 
 const MongoClient = require("mongodb").MongoClient;
 const ObjectId = require("mongodb").ObjectId;
@@ -13,7 +12,7 @@ const DATABASE_NAME = process.env.DATABASE_NAME;
 const port = process.env.PORT;
 
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cors());
 
@@ -24,6 +23,17 @@ var database, recipe_collection;
 app.get('/api/recipes', (req, res) => {
     recipe_collection.find({}).toArray((error, result) => {
         if (error) {
+            return res.status(500).send(error);
+        }
+        res.send(result);
+    });
+})
+
+//* GET recipe by object id
+app.get('/api/recipes/:_id', (req, res) => {
+    var _id = req.params._id;
+    recipe_collection.find({"_id": ObjectId(_id)}).toArray((error, result) => {
+        if(error){
             return res.status(500).send(error);
         }
         res.send(result);
@@ -81,41 +91,41 @@ app.get('/api/recipes/:cuisine', (req, res) => {
 
 //* GET recipes by "Protein source"
 
-//* POST methods
+//* POST methods - Create new recipe
 app.post('/api/recipes', (req, res) => {
     recipe_collection.insertOne(req.body, (error, result) => {
         if(error) {
             return res.status(500).send(error);
         }
-        res.send(result.result);
+        res.send(req.body);
     });
 })
 
-//* PUT methods
-app.put('/api/recipes/:title', (req, res) => {
-    var title = req.params.title;
+//* PUT methods - Update a recipe
+app.put('/api/recipes/:_id', (req, res) => {
 
-    var myquery = {"title": title};
-    var new_values = {$set: req.body};
+    var myquery = { _id: ObjectId(req.body.recipe._id) };
+
+    delete req.body.recipe._id;
+    var new_values = { $set: req.body.recipe };
 
     recipe_collection.updateOne(myquery, new_values, (error, result) => {
         if(error) {
             return res.status(500).send(error);
         }
-        return res.send(result.result);
+        res.send(result.result);
     })
 })
 
 //* DELETE methods
-app.delete('/api/recipes/:title', (req, res) => {
-    var title = req.params.title;
+app.delete('/api/recipes/:_id', (req, res) => {
+    var _id = req.params._id;
 
-    var myquery = {"title": title};
-    recipe_collection.deleteOne(myquery, (error, result) => {
+    recipe_collection.deleteOne({"_id": ObjectId(_id)}, (error, result) => {
         if(error){
             return res.status(500).send(error);
         }
-        return res.send(result.result);
+        res.send(result.result);
     })
 })
 
